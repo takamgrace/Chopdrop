@@ -4,14 +4,18 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-$host = getenv('DB_HOST') ?: '127.0.0.1';
-$user = getenv('DB_USER') ?: 'root';
-$pass = getenv('DB_PASS') ?: '';
-$dbname = getenv('DB_NAME') ?: 'chopdrop';
 
-// Attempt connection
-$conn = new mysqli($host, $user, $pass, $dbname);
+// 1. Get the values from Render's Environment tab
+// If they don't exist (like on your laptop), it uses the second value (localhost)
+$db_host = getenv('DB_HOST') ?: '127.0.0.1';
+$db_user = getenv('DB_USER') ?: 'root';
+$db_pass = getenv('DB_PASS') ?: '';
+$db_name = getenv('DB_NAME') ?: 'chopdrop';
 
+// 2. Create the connection using the variables (with $)
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+// 3. Check if it worked
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
