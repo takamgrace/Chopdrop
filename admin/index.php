@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isVendor) {
             }
         }
         
-        // Rider must belong to this restaurant and be ONLINE
-        $rCheck = $db->query("SELECT id FROM users WHERE id=$riderId AND role='rider' AND restaurant_id=$rid AND is_active=1 AND is_online=1")->fetch_assoc();
+        // Rider must be ONLINE and ACTIVE (global pool)
+        $rCheck = $db->query("SELECT id FROM users WHERE id=$riderId AND role='rider' AND is_active=1 AND is_online=1")->fetch_assoc();
         if (!$rCheck) { flash('error', 'Invalid or offline rider selected.'); header('Location: index.php'); exit; }
 
         $db->query("UPDATE orders SET status='ready', rider_id=$riderId, rider_assigned_at=NOW() WHERE id=$oid");
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isVendor) {
     header('Location: index.php'); exit;
 }
 
-$riders = $isVendor ? $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=$rid AND is_active=1 AND is_online=1")->fetch_all(MYSQLI_ASSOC) : [];
+$riders = $isVendor ? $db->query("SELECT id, name FROM users WHERE role='rider' AND is_active=1 AND is_online=1")->fetch_all(MYSQLI_ASSOC) : [];
 
 // Base query conditions
 $whereRest      = $isVendor ? "WHERE o.restaurant_id=$rid" : "";

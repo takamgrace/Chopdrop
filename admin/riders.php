@@ -1,12 +1,15 @@
 <?php
-session_start(); require_once '../includes/config.php'; requireVendor();
+session_start(); require_once '../includes/config.php'; requireAdminOrVendor();
 $db = db();
 $rid = getVendorRid();
-$pageTitle = 'My Riders — ChopDrop Admin';
+$is_admin = isAdmin();
+$pageTitle = ($is_admin ? 'Manage Riders' : 'Global Riders') . ' — ChopDrop Admin';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     
+    if (!$is_admin) { flash('error', 'Unauthorized.'); header('Location: riders.php'); exit; }
+
     if ($action === 'add') {
         $name = $db->real_escape_string($_POST['name']);
         $email = $db->real_escape_string($_POST['email']);
@@ -18,22 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($check) {
             flash('error', 'A user with this email already exists.');
         } else {
-            $db->query("INSERT INTO users (name, email, password, role, restaurant_id, phone) 
-                        VALUES ('$name', '$email', '$pass', 'rider', $rid, '$phone')");
+            $db->query("INSERT INTO users (name, email, password, role, is_online, is_active, phone) 
+                        VALUES ('$name', '$email', '$pass', 'rider', 1, 1, '$phone')");
             flash('success', "Rider $name registered successfully.");
         }
     }
     
     if ($action === 'delete') {
         $id = (int)$_POST['id'];
-        $db->query("DELETE FROM users WHERE id=$id AND restaurant_id=$rid AND role='rider'");
+        $db->query("DELETE FROM users WHERE id=$id AND role='rider'");
         flash('success', 'Rider account removed.');
+    }
+
+    if ($action === 'toggle_status') {
+        $id = (int)$_POST['id'];
+        $db->query("UPDATE users SET is_active = NOT is_active WHERE id=$id AND role='rider'");
+        flash('success', 'Rider visibility status updated.');
     }
     
     header('Location: riders.php'); exit;
 }
 
-$riders = $db->query("SELECT * FROM users WHERE restaurant_id=$rid AND role='rider' ORDER BY created_at DESC")->fetch_all(MYSQLI_ASSOC);
+$riders = $db->query("SELECT * FROM users WHERE role='rider' ORDER BY created_at DESC")->fetch_all(MYSQLI_ASSOC);
 
 require_once '../includes/header.php';
 ?>
@@ -42,12 +51,14 @@ require_once '../includes/header.php';
 <main class="flex-1 p-8 overflow-x-auto relative">
   <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
     <div>
-      <h1 class="font-display text-4xl font-black text-white">My Riders</h1>
-      <p class="text-purple-400 mt-1">Manage delivery personnel for <?= e($_SESSION['name']) ?></p>
+      <h1 class="font-display text-4xl font-black text-white"><?= $is_admin ? 'Manage Riders' : 'Global Riders' ?></h1>
+      <p class="text-purple-400 mt-1"><?= $is_admin ? 'Overview of all delivery personnel' : 'View available riders for delivery' ?></p>
     </div>
+    <?php if($is_admin): ?>
     <button onclick="document.getElementById('addRiderModal').classList.remove('hidden')" class="btn-gold rounded-2xl px-6 py-3 text-sm font-black shadow-lg shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2">
       <span class="text-xl">+</span> Hire New Rider
     </button>
+    <?php endif; ?>
   </div>
 
   <?php if($f=flash('success')): ?>
@@ -88,7 +99,11 @@ require_once '../includes/header.php';
           </td>
           <td class="px-6 py-5 text-purple-400 text-xs font-semibold whitespace-nowrap"><?= date('d M, Y', strtotime($r['created_at'])) ?></td>
           <td class="px-6 py-5">
-            <?php if($r['is_online']): ?>
+            <?php if(!$r['is_active']): ?>
+              <span class="bg-gray-900/60 text-gray-500 border border-gray-500/30 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 w-fit">
+                <span class="w-1.5 h-1.5 bg-gray-500 rounded-full"></span> Suspended
+              </span>
+            <?php elseif($r['is_online']): ?>
               <span class="bg-emerald-900/40 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 w-fit">
                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Online
               </span>
@@ -99,20 +114,35 @@ require_once '../includes/header.php';
             <?php endif; ?>
           </td>
           <td class="px-6 py-5">
-            <form method="POST" onsubmit="return confirm('Remove rider <?= e($r['name']) ?>?')">
-              <input type="hidden" name="action" value="delete"/>
-              <input type="hidden" name="id" value="<?= $r['id'] ?>"/>
-              <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-900/30 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              </button>
-            </form>
+            <?php if($is_admin): ?>
+            <div class="flex items-center gap-2">
+              <form method="POST">
+                <input type="hidden" name="action" value="toggle_status"/>
+                <input type="hidden" name="id" value="<?= $r['id'] ?>"/>
+                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl border transition-all shadow-lg active:scale-95
+                  <?= $r['is_active'] ? 'bg-emerald-900/30 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500 hover:text-white' : 'bg-amber-900/30 text-amber-500 border-amber-500/30 hover:bg-amber-500 hover:text-white' ?>"
+                  title="<?= $r['is_active'] ? 'Deactivate Rider' : 'Activate Rider' ?>">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </button>
+              </form>
+              <form method="POST" onsubmit="return confirm('Remove rider <?= e($r['name']) ?>?')">
+                <input type="hidden" name="action" value="delete"/>
+                <input type="hidden" name="id" value="<?= $r['id'] ?>"/>
+                <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-900/30 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </form>
+            </div>
+            <?php else: ?>
+              <span class="text-purple-600 text-xs italic">View Only</span>
+            <?php endif; ?>
           </td>
         </tr>
         <?php endforeach; ?>
         <?php if(empty($riders)): ?>
         <tr><td colspan="5" class="px-6 py-24 text-center">
           <div class="text-6xl mb-4 opacity-20">🚴</div>
-          <p class="text-purple-400 font-bold">No riders assigned to your restaurant yet.</p>
+          <p class="text-purple-400 font-bold">No riders recruited yet.</p>
         </td></tr>
         <?php endif; ?>
         </tbody>
@@ -122,7 +152,8 @@ require_once '../includes/header.php';
 </main>
 </div>
 
-<!-- Add Rider Modal -->
+<!-- Add Rider Modal (Admin Only) -->
+<?php if($is_admin): ?>
 <div id="addRiderModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-5 bg-purple-950/60 backdrop-blur-md">
   <div class="glass w-full max-w-md rounded-[40px] p-8 border border-gold-500/20 shadow-2xl animate-fade-up">
     <div class="flex justify-between items-center mb-8">
@@ -153,5 +184,6 @@ require_once '../includes/header.php';
     </form>
   </div>
 </div>
+<?php endif; ?>
 
 <?php require_once '../includes/footer.php'; ?>

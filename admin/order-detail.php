@@ -66,7 +66,8 @@ if ($isVendor && $order['restaurant_id'] != $vrid) {
 }
 
 $items=$db->query("SELECT * FROM order_items WHERE order_id=$id")->fetch_all(MYSQLI_ASSOC);
-$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=".$order['restaurant_id'])->fetch_all(MYSQLI_ASSOC);
+// Get all active riders for assignment
+$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND is_active=1")->fetch_all(MYSQLI_ASSOC);
 
 $statuses=['pending','confirmed','preparing','ready','in_transit','delivered','cancelled'];
 $steps=['pending'=>0,'confirmed'=>1,'preparing'=>2,'ready'=>3,'in_transit'=>4,'delivered'=>5];

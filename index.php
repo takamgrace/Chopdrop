@@ -270,91 +270,84 @@ require_once 'includes/header.php';
 <!-- ═══════════════════════════════════════════
      CTA BANNER
 ════════════════════════════════════════════ -->
-<section class="max-w-7xl mx-auto px-5 py-20">
-  <div class="relative rounded-3xl overflow-hidden">
+<section class="max-w-7xl mx-auto px-5 py-20 pb-32">
+  <div class="relative rounded-[40px] overflow-hidden bg-purple-900 shadow-2xl">
     <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=85" alt="Food" class="absolute inset-0 img-cover opacity-20"/>
-    <div class="absolute inset-0 bg-gradient-to-r from-purple-900/95 via-purple-800/80 to-purple-900/95"></div>
-    <div class="relative z-10 p-12 md:p-16 text-center">
-      <p class="text-gold-400 text-sm font-bold uppercase tracking-widest mb-3">Limited Time</p>
-      <h2 class="font-display text-4xl md:text-5xl font-black text-white mb-4">
-        First Order <span class="gold-text">20% Off</span>
-      </h2>
-      <p class="text-purple-200 mb-8 max-w-lg mx-auto">Create your account today and get 20% off your first ChopDrop order. Premium food, premium savings.</p>
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-950 via-purple-900/80 to-purple-950"></div>
+    <div class="relative z-10 p-12 md:p-20 text-center">
+      <div class="inline-flex items-center gap-2 bg-gold-400 text-purple-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 shadow-lg">Limited Time Offer</div>
+      <h2 class="font-display text-4xl md:text-6xl font-black text-white mb-6">First Order <span class="gold-text">20% Off</span></h2>
+      <p class="text-purple-200 mb-10 max-w-xl mx-auto text-lg leading-relaxed">Join the ChopDrop family today and enjoy premium food delivery with a 20% discount on your first order.</p>
       <div class="flex gap-4 justify-center flex-wrap">
-        <a href="register.php" class="btn-gold rounded-2xl px-8 py-4 text-base">Get Started Free</a>
-        <a href="restaurants.php" class="glass rounded-2xl px-8 py-4 text-base font-semibold text-white hover:bg-purple-700/40 transition-colors">Browse Menu</a>
+        <a href="register.php" class="btn-gold rounded-3xl px-10 py-5 text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all">Get Started Free</a>
+        <a href="restaurants.php" class="glass rounded-3xl px-10 py-5 text-lg font-bold text-white hover:bg-purple-700/40 transition-colors border border-white/10">Browse Menu</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Toast Notification Container -->
-<div id="toast-container" class="fixed bottom-8 right-8 z-[100] flex flex-col gap-3"></div>
+<!-- Toast Notifications -->
+<div id="toast-container" class="fixed bottom-8 right-8 z-[100] flex flex-col gap-3 pointer-events-none child-pointer-events-auto"></div>
+
+<!-- AI SUGGESTION CHATBOT -->
+<div id="chatbot-container" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4 pointer-events-none">
+  <div id="chat-window" class="glass w-[350px] h-[500px] rounded-[32px] overflow-hidden flex flex-col border border-gold-500/20 shadow-2xl transition-all duration-500 origin-bottom-right scale-0 opacity-0 pointer-events-auto">
+    <div class="bg-gradient-to-r from-purple-900 to-purple-800 p-5 flex items-center justify-between border-b border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gold-500 rounded-full flex items-center justify-center text-xl shadow-lg ring-2 ring-gold-500/20">✨</div>
+        <div>
+          <div class="text-white font-black text-sm leading-none">ChopDrop Assistant</div>
+          <div class="text-[10px] text-gold-400 font-bold uppercase tracking-widest mt-1 mr-[-5px]">AI Concierge</div>
+        </div>
+      </div>
+      <button id="close-chat" class="text-purple-300 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-purple-950/20">
+      <div class="bg-purple-900/40 text-purple-100 p-4 rounded-2xl rounded-tl-none text-sm border border-purple-700/30">
+        Hi! I'm the ChopDrop Assistant. Ask me for recommendations!
+      </div>
+    </div>
+    <div class="p-5 bg-purple-900/20 border-t border-white/5">
+      <form id="chat-form" class="relative">
+        <input type="text" id="chat-input" placeholder="Type your craving..." class="w-full bg-purple-900/60 border border-purple-700/30 rounded-2xl pl-5 pr-12 py-4 text-white text-sm focus:border-gold-500 outline-none shadow-inner"/>
+        <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-gold-500 rounded-xl flex items-center justify-center text-purple-950 shadow-lg hover:scale-105 active:scale-95 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+  <button id="toggle-chat" class="w-16 h-16 bg-gold-500 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 hover:rotate-12 active:scale-90 transition-all pointer-events-auto relative group">
+    <span class="z-10 animate-float">🍱</span>
+    <div class="absolute inset-0 bg-gold-500 rounded-full animate-ping opacity-20 group-hover:hidden"></div>
+  </button>
+</div>
 
 <style>
+  #chat-window.active { transform: scale(1); opacity: 1; pointer-events: auto; }
+  #chat-window { transform: scale(0); opacity: 0; pointer-events: none; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: bottom right; }
+  .child-pointer-events-auto > * { pointer-events: auto; }
   .toast-enter { transform: translateX(100%); opacity: 0; }
   .toast-visible { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   .toast-exit { transform: translateX(100%); opacity: 0; transition: all 0.3s ease-in; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.2); border-radius: 10px; }
+  .typing-dot { animation: typing 1.4s infinite; }
+  @keyframes typing { 0%, 20% { opacity: .2; } 50% { opacity: 1; } 100% { opacity: .2; } }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  const toggleBtn = document.getElementById('toggle-chat'), closeBtn = document.getElementById('close-chat'), chatWin = document.getElementById('chat-window'), chatForm = document.getElementById('chat-form'), chatInp = document.getElementById('chat-input'), chatMsgs = document.getElementById('chat-messages');
+  if(toggleBtn && chatWin){ toggleBtn.onclick=(e)=>{ e.stopPropagation(); chatWin.classList.toggle('active'); }; closeBtn.onclick=()=>chatWin.classList.remove('active'); }
+  function addMessage(text, isUser=false){ const msg=document.createElement('div'); msg.className=isUser?'bg-gold-500 text-purple-950 p-4 rounded-2xl rounded-tr-none text-sm ml-8 font-semibold':'bg-purple-900/40 text-purple-100 p-4 rounded-2xl rounded-tl-none text-sm mr-8 border border-purple-700/30'; msg.innerHTML=text.replace(/\n/g,'<br>'); chatMsgs.appendChild(msg); chatMsgs.scrollTop=chatMsgs.scrollHeight; }
+  if(chatForm){ chatForm.onsubmit=async(e)=>{ e.preventDefault(); const m=chatInp.value.trim(); if(!m)return; addMessage(m,true); chatInp.value=''; const t=document.createElement('div'); t.className='bg-purple-900/40 text-purple-100 p-4 rounded-2xl text-xs flex gap-1 w-fit'; t.innerHTML='<span class="typing-dot">●</span><span class="typing-dot" style="animation-delay:0.2s">●</span><span class="typing-dot" style="animation-delay:0.4s">●</span>'; chatMsgs.appendChild(t); chatMsgs.scrollTop=chatMsgs.scrollHeight; try{ const r=await fetch('ajax_chatbot.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})}); const d=await r.json(); t.remove(); if(d.reply)addMessage(d.reply); else addMessage('Error.'); }catch(err){ t.remove(); addMessage('Error.'); } }; }
   const toastContainer = document.getElementById('toast-container');
-  const cartCounters = document.querySelectorAll('.cart-count-badge'); // Update header if badges have this class
-
-  function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    const bgColor = type === 'success' ? 'bg-emerald-600/90' : 'bg-red-600/90';
-    const icon = type === 'success' ? '✅' : '⚠️';
-    
-    toast.className = `${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10 flex items-center gap-3 min-w-[280px] toast-enter`;
-    toast.innerHTML = `<span class="text-xl">${icon}</span> <span class="font-bold text-sm">${message}</span>`;
-    
-    toastContainer.appendChild(toast);
-    setTimeout(() => toast.classList.add('toast-visible'), 10);
-    
-    setTimeout(() => {
-      toast.classList.add('toast-exit');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  document.querySelectorAll('.ajax-cart-form').forEach(form => {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const btn = this.querySelector('button');
-      
-      btn.disabled = true;
-      btn.classList.add('opacity-50', 'shimmer');
-
-      fetch('cart.php', {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          showToast(data.message);
-          // Update cart counts in header if exists
-          const badges = document.querySelectorAll('[id^="cartCount"], .cart-count-display');
-          badges.forEach(b => {
-            b.textContent = data.cartCount;
-            b.classList.add('animate-bounce');
-            setTimeout(() => b.classList.remove('animate-bounce'), 1000);
-          });
-        } else {
-          if (data.redirect) window.location.href = data.redirect;
-          else showToast(data.message, 'error');
-        }
-      })
-      .catch(err => showToast('Failed to add item.', 'error'))
-      .finally(() => {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'shimmer');
-      });
-    });
-  });
+  function showToast(message, type='success'){ if(!toastContainer)return; const toast=document.createElement('div'); const bgColor=type==='success'?'bg-emerald-600/90':'bg-red-600/90'; toast.className=`${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10 flex items-center gap-3 min-w-[280px] toast-enter`; icon=type==='success'?'✅':'⚠️'; toast.innerHTML=`<span class="text-xl">${icon}</span> <span class="font-bold text-sm">${message}</span>`; toastContainer.appendChild(toast); setTimeout(()=>toast.classList.add('toast-visible'),10); setTimeout(()=>{toast.classList.add('toast-exit');setTimeout(()=>toast.remove(),300);},4000); }
+  document.querySelectorAll('.ajax-cart-form').forEach(form => { form.addEventListener('submit', function(e) { e.preventDefault(); const formData=new FormData(this); const btn=this.querySelector('button'); btn.disabled=true; btn.classList.add('opacity-50','shimmer'); fetch('cart.php',{method:'POST',body:formData}).then(res=>res.json()).then(data=>{ if(data.success){ showToast(data.message); const badges=document.querySelectorAll('[id^="cartCount"], .cart-count-display'); badges.forEach(b=>{b.textContent=data.cartCount; b.classList.add('animate-bounce'); setTimeout(()=>b.classList.remove('animate-bounce'),1000);}); } else { if(data.redirect)window.location.href=data.redirect; else showToast(data.message,'error'); } }).catch(err=>showToast('Error.','error')).finally(()=>{btn.disabled=false; btn.classList.remove('opacity-50','shimmer');}); }); });
 });
 </script>
 

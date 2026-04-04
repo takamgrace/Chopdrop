@@ -9,12 +9,13 @@ $links = [['index', '🏠', 'Dashboard']];
 if ($is_admin) {
     $links[] = ['users', '🤝', 'Vendors'];
     $links[] = ['restaurants', '🏛️', 'Manage Shops'];
+    $links[] = ['riders', '🚴', 'Manage Riders'];
 }
 
 if ($is_vendor) {
     $links[] = ['orders', '📦', 'My Orders'];
     $links[] = ['foods', '🍽️', 'Menu Items'];
-    $links[] = ['riders', '🚴', 'My Riders'];
+    $links[] = ['riders', '🚴', 'Global Riders'];
     $links[] = ['customers', '👥', 'My Customers'];
     $links[] = ['restaurants', '🏛️', 'My Shop'];
 }
