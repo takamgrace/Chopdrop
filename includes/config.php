@@ -4,19 +4,33 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-// Get the settings from the Environment tab we just fixed
-$db_host = getenv('DB_HOST');
-$db_user = getenv('DB_USER');
-$db_pass = getenv('DB_PASS');
-$db_name = getenv('DB_NAME');
+$db_url = getenv('DATABASE_URL'); // Render sets this automatically
 
-// Line 16: Create the connection
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($db_url) {
+    $params = parse_url($db_url);
+    $host   = $params['host'];
+    $user   = $params['user'];
+    $pass   = $params['pass'];
+    $dbname = ltrim($params['path'], '/');
+    $port   = $params['port'] ?? 5432;
+} else {
+    $host   = getenv('DB_HOST');
+    $user   = getenv('DB_USER');
+    $pass   = getenv('DB_PASS');
+    $dbname = getenv('DB_NAME');
+    $port   = getenv('DB_PORT') ?: 5432;
 }
+
+try {
+    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
 
 
 define('CURRENCY','XAF');
