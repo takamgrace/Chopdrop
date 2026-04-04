@@ -2,12 +2,13 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-define('DB_HOST','127.0.0.1');
-define('DB_USER','root');
-define('DB_PASS','');
-define('DB_NAME','chopdrop');
-define('SITE_NAME','ChopDrop');
-define('SITE_URL','http://localhost/chopdrop');
+
+$host = getenv('DB_HOST') ?: '127.0.0.1';
+$user = getenv('DB_USER') ?: 'root';
+$pass = getenv('DB_PASS') ?: '';
+$dbname = getenv('DB_NAME') ?: 'chopdrop';
+
+
 define('CURRENCY','XAF');
 
 function db(): mysqli {
