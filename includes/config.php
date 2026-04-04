@@ -3,19 +3,21 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Use getenv to pull the REAL values from Render's dashboard
-$db_host = getenv('DB_HOST'); 
-$db_user = getenv('DB_USER'); 
-$db_pass = getenv('DB_PASS'); 
-$db_name = getenv('DB_NAME'); 
 
-// Create the connection
+// Get the settings from the Environment tab we just fixed
+$db_host = getenv('DB_HOST');
+$db_user = getenv('DB_USER');
+$db_pass = getenv('DB_PASS');
+$db_name = getenv('DB_NAME');
+
+// Line 16: Create the connection
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
-// Check if it worked
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
 
 define('CURRENCY','XAF');
 
