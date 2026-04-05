@@ -1,34 +1,30 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
+// Get DATABASE_URL that Render sets automatically for PostgreSQL
+$db_url = getenv('DATABASE_URL');
 
-$db_url = getenv('DATABASE_URL'); // Render sets this automatically
-
-if ($db_url) {
-    $params = parse_url($db_url);
-    $host   = $params['host'];
-    $user   = $params['user'];
-    $pass   = $params['pass'];
-    $dbname = ltrim($params['path'], '/');
-    $port   = $params['port'] ?? 5432;
-} else {
-    $host   = getenv('DB_HOST');
-    $user   = getenv('DB_USER');
-    $pass   = getenv('DB_PASS');
-    $dbname = getenv('DB_NAME');
-    $port   = getenv('DB_PORT') ?: 5432;
+if (!$db_url) {
+    die("DATABASE_URL environment variable not set.");
 }
 
+// Parse the URL
+$params  = parse_url($db_url);
+$host    = $params['host'];
+$port    = $params['port']    ?? 5432;
+$user    = $params['user'];
+$pass    = $params['pass'];
+$dbname  = ltrim($params['path'], '/');
+
 try {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+    $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode=require";
     $pdo = new PDO($dsn, $user, $pass, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    error_log("DB Error: " . $e->getMessage());
+    die("Database connection failed: " . $e->getMessage());
 }
 
 
