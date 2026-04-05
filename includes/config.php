@@ -1,30 +1,17 @@
 <?php
+$host = getenv('DB_HOST');
+$db   = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASSWORD');
+$port = getenv('DB_PORT');
 
-// Get DATABASE_URL that Render sets automatically for PostgreSQL
-$db_url = getenv('DATABASE_URL');
+// Construct the connection string for PostgreSQL
+$connection_string = "host=$host port=$port dbname=$db user=$user password=$pass";
 
-if (!$db_url) {
-    die("DATABASE_URL environment variable not set.");
-}
+$dbconn = pg_connect($connection_string);
 
-// Parse the URL
-$params  = parse_url($db_url);
-$host    = $params['host'];
-$port    = $params['port']    ?? 5432;
-$user    = $params['user'];
-$pass    = $params['pass'];
-$dbname  = ltrim($params['path'], '/');
-
-try {
-    $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode=require";
-    $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
-    ]);
-} catch (PDOException $e) {
-    error_log("DB Error: " . $e->getMessage());
-    die("Database connection failed: " . $e->getMessage());
+if(!$dbconn) {
+    die("Connection failed. Check your Render Environment Variables.");
 }
 
 
