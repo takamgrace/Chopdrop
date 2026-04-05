@@ -1,17 +1,22 @@
 <?php
-$host = getenv('DB_HOST');
-$db   = getenv('DB_NAME');
-$user = getenv('DB_USER');
-$pass = getenv('DB_PASSWORD');
-$port = getenv('DB_PORT');
 
-// Construct the connection string for PostgreSQL
-$connection_string = "host=$host port=$port dbname=$db user=$user password=$pass";
+// Read from environment variables set on Render
+define('DB_HOST',   getenv('DB_HOST')   ?: 'localhost');
+define('DB_USER',   getenv('DB_USER')   ?: 'root');
+define('DB_PASS',   getenv('DB_PASS')   ?: '');
+define('DB_NAME',   getenv('DB_NAME')   ?: 'chopdrop_db');
+define('DB_PORT',   (int)(getenv('DB_PORT') ?: 3306));
 
-$dbconn = pg_connect($connection_string);
-
-if(!$dbconn) {
-    die("Connection failed. Check your Render Environment Variables.");
+function db() {
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    try {
+        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+        $conn->set_charset('utf8mb4');
+        return $conn;
+    } catch (mysqli_sql_exception $e) {
+        error_log("DB connection failed: " . $e->getMessage());
+        die("Database connection failed: " . $e->getMessage());
+    }
 }
 
 
