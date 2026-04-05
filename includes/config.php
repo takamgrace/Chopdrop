@@ -1,21 +1,27 @@
 <?php
+if (defined('CHOPDROP_DB_LOADED')) return;
+define('CHOPDROP_DB_LOADED', true);
 
-// Read from environment variables set on Render
-define('DB_HOST',   getenv('DB_HOST')   ?: 'localhost');
-define('DB_USER',   getenv('DB_USER')   ?: 'root');
-define('DB_PASS',   getenv('DB_PASS')   ?: '');
-define('DB_NAME',   getenv('DB_NAME')   ?: 'chopdrop_db');
-define('DB_PORT',   (int)(getenv('DB_PORT') ?: 3306));
+$host   = getenv('DB_HOST');
+$user   = getenv('DB_USER');
+$pass   = getenv('DB_PASS');
+$dbname = getenv('DB_NAME');
+$port   = (int)(getenv('DB_PORT') ?: 3306);
 
-function db() {
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-    try {
-        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-        $conn->set_charset('utf8mb4');
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+try {
+    $conn = new mysqli($host, $user, $pass, $dbname, $port);
+    $conn->set_charset('utf8mb4');
+} catch (mysqli_sql_exception $e) {
+    error_log("DB connection failed: " . $e->getMessage());
+    die("Database connection failed: " . $e->getMessage());
+}
+
+if (!function_exists('db')) {
+    function db() {
+        global $conn;
         return $conn;
-    } catch (mysqli_sql_exception $e) {
-        error_log("DB connection failed: " . $e->getMessage());
-        die("Database connection failed: " . $e->getMessage());
     }
 }
 
