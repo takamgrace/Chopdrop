@@ -23,21 +23,8 @@ function db() {
 
 define('CURRENCY','XAF');
 
-function db(): mysqli {
-    static $conn = null;
-    if ($conn === null) {
-        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        if ($conn->connect_error) {
-            die('<div style="font-family:sans-serif;padding:40px;background:#1a0a2e;color:#fff;min-height:100vh">
-                <h2 style="color:#c084fc">Database Error</h2>
-                <p>' . $conn->connect_error . '</p>
-                <p>Make sure XAMPP is running and you imported <b>chopdrop.sql</b> in phpMyAdmin.</p>
-            </div>');
-        }
-        $conn->set_charset('utf8mb4');
-    }
-    return $conn;
-}
+
+
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function money(int $n): string { return number_format($n) . ' XAF'; }
 function isLoggedIn(): bool { return isset($_SESSION['user_id']); }
