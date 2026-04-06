@@ -10,6 +10,7 @@ if ($is_admin) {
     $links[] = ['users', '🤝', 'Vendors'];
     $links[] = ['restaurants', '🏛️', 'Manage Shops'];
     $links[] = ['riders', '🚴', 'Manage Riders'];
+    $links[] = ['earnings', '💰', 'Revenue & Sales'];
 }
 
 if ($is_vendor) {
@@ -18,6 +19,7 @@ if ($is_vendor) {
     $links[] = ['riders', '🚴', 'Global Riders'];
     $links[] = ['customers', '👥', 'My Customers'];
     $links[] = ['restaurants', '🏛️', 'My Shop'];
+    $links[] = ['earnings', '💰', 'My Earnings'];
 }
 ?>
 <aside class="w-full md:w-56 bg-purple-900/80 border-b md:border-b-0 md:border-r border-purple-700/30 flex-shrink-0 flex flex-col md:min-h-[calc(100vh-68px)]">

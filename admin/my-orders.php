@@ -113,7 +113,7 @@ require_once '../includes/header.php';
 
   <!-- ═══════════════ EARNINGS DASHBOARD ═══════════════ -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-  
+
     <div class="glass rounded-3xl p-6 border border-purple-700/30 shadow-xl">
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center text-2xl mb-4 shadow-lg">📊</div>
       <div class="text-purple-400 text-xs font-bold uppercase tracking-widest mb-1 opacity-70">All-Time Earnings</div>

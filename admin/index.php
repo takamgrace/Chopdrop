@@ -141,7 +141,7 @@ require_once '../includes/header.php';
         <span class="text-2xl animate-pulse">⚡</span>
         <div>
           <h2 class="font-display font-black text-white text-xl">Orders Awaiting Dispatch</h2>
-          <p class="text-amber-400 text-xs font-semibold mt-0.5">Select a rider and click Dispatch to mark as Ready and send to delivery</p>
+          <p class="text-green-400 text-xs font-semibold mt-0.5">Select a rider and click Dispatch to mark as Ready and send to delivery</p>
         </div>
         <span class="ml-auto bg-amber-500 text-amber-950 text-xs font-black px-3 py-1 rounded-full"><?= count($actionableOrders) ?> Pending</span>
       </div>
