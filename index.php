@@ -1,12 +1,5 @@
 <?php
-echo "<pre>";
-echo "HOST: "   . getenv('DB_HOST') . "\n";
-echo "USER: "   . getenv('DB_USER') . "\n";
-echo "DB:   "   . getenv('DB_NAME') . "\n";
-echo "PORT: "   . getenv('DB_PORT') . "\n";
-echo "PASS: "   . (getenv('DB_PASS') ? 'SET ✓' : 'MISSING ✗') . "\n";
-echo "</pre>";
-exit;
+
 
 session_start();
 require_once 'includes/config.php';
