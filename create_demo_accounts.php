@@ -47,7 +47,7 @@ function createUser($name, $email, $role, $rid) {
     $db->query("INSERT INTO users (name, email, password, role, restaurant_id) VALUES ('$n', '$e', '$pass', '$role', $rid)");
 }
 
-$restaurants = $db->query("SELECT id, name FROM restaurants")->fetch_all(MYSQLI_ASSOC);
+$restaurants = $db->query("SELECT id, name FROM restaurants")->fetch_all();
 
 foreach ($restaurants as $r) {
     $rid = $r['id'];

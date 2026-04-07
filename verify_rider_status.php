@@ -15,7 +15,7 @@ $db->query("UPDATE users SET is_online=0 WHERE id=$rid");
 echo "Updated Status (Toggle to 0): " . ($db->query("SELECT is_online FROM users WHERE id=$rid")->fetch_assoc()['is_online'] ? 'Online' : 'Offline') . "\n";
 
 // 3. Verify Vendor List (Should NOT show this rider)
-$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=1 AND is_active=1 AND is_online=1")->fetch_all(MYSQLI_ASSOC);
+$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=1 AND is_active=1 AND is_online=1")->fetch_all();
 $found = false;
 foreach ($riders as $r) {
     if ($r['id'] == $rid) $found = true;
@@ -27,7 +27,7 @@ $db->query("UPDATE users SET is_online=1 WHERE id=$rid");
 echo "Final Status (Reset to 1): " . ($db->query("SELECT is_online FROM users WHERE id=$rid")->fetch_assoc()['is_online'] ? 'Online' : 'Offline') . "\n";
 
 // 5. Verify Vendor List (Should show this rider)
-$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=1 AND is_active=1 AND is_online=1")->fetch_all(MYSQLI_ASSOC);
+$riders = $db->query("SELECT id, name FROM users WHERE role='rider' AND restaurant_id=1 AND is_active=1 AND is_online=1")->fetch_all();
 $found = false;
 foreach ($riders as $r) {
     if ($r['id'] == $rid) $found = true;

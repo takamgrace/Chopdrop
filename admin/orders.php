@@ -30,7 +30,7 @@ $orders=db()->query("SELECT o.*,u.name uname,u.phone uphone,r.name rname, rider.
     JOIN restaurants r ON r.id=o.restaurant_id 
     LEFT JOIN users rider ON rider.id=o.rider_id
     WHERE 1=1 $whereStatus $whereDispute $whereRest
-    ORDER BY o.created_at DESC")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY o.created_at DESC")->fetch_all();
 
 // Vendor read-only query — no riders needed
 $statuses=['pending','confirmed','preparing','ready','in_transit','delivered','cancelled'];

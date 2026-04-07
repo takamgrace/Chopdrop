@@ -85,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $where       = $rid ? "WHERE f.restaurant_id=$rid" : '';
-$foods       = $db->query("SELECT f.*,r.name rname FROM foods f JOIN restaurants r ON r.id=f.restaurant_id $where ORDER BY r.name,f.category,f.name")->fetch_all(MYSQLI_ASSOC);
-$restaurants = $db->query("SELECT id,name FROM restaurants ORDER BY name")->fetch_all(MYSQLI_ASSOC);
+$foods       = $db->query("SELECT f.*,r.name rname FROM foods f JOIN restaurants r ON r.id=f.restaurant_id $where ORDER BY r.name,f.category,f.name")->fetch_all();
+$restaurants = $db->query("SELECT id,name FROM restaurants ORDER BY name")->fetch_all();
 $categories  = ['Main Dish','Pizza','Burger','Chicken','Starter','Sushi','Sashimi','Salad','Bowl','Sides','Dessert','Drinks','Curry','Rice','Bread','Noodles','Other'];
 
 require_once '../includes/header.php';

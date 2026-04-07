@@ -6,7 +6,7 @@ function generatePassword($length = 8) {
     return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $length);
 }
 
-$restaurants = $db->query("SELECT id, name FROM restaurants")->fetch_all(MYSQLI_ASSOC);
+$restaurants = $db->query("SELECT id, name FROM restaurants")->fetch_all();
 $creds = [];
 
 $output = "| Restaurant | Role | Email | Password |\n";

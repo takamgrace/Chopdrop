@@ -38,7 +38,7 @@ $orders = $db->query("
     JOIN restaurants r ON r.id = o.restaurant_id
     WHERE o.rider_id = $riderId
     ORDER BY FIELD(o.status,'in_transit','ready','confirmed','preparing','delivered','cancelled'), o.created_at DESC
-")->fetch_all(MYSQLI_ASSOC);
+")->fetch_all();
 
 $sc = [
     'pending'    => 'bg-amber-900/70 text-amber-300 border-amber-500/30',
@@ -66,7 +66,7 @@ $monthlyBreakdown = $db->query("
     GROUP BY DATE_FORMAT(created_at,'%Y-%m')
     ORDER BY month DESC
     LIMIT 3
-")->fetch_all(MYSQLI_ASSOC);
+")->fetch_all();
 
 require_once '../includes/header.php';
 ?>

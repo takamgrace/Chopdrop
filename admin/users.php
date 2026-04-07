@@ -27,7 +27,7 @@ $users=$db->query("SELECT u.*,
     FROM users u 
     LEFT JOIN restaurants r ON r.id=u.restaurant_id
     WHERE u.role = 'vendor' $whereSearch 
-    ORDER BY u.created_at DESC")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY u.created_at DESC")->fetch_all();
 require_once '../includes/header.php';
 ?>
 <div class="flex flex-col md:flex-row min-h-[calc(100vh-68px)] relative overflow-hidden">

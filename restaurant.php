@@ -13,9 +13,9 @@ if (isset($restaurant['is_active']) && !$restaurant['is_active'] && !isAdmin()) 
 
 $catFilter = $_GET['cat'] ?? '';
 $cw = $catFilter ? "AND category='".db()->real_escape_string($catFilter)."'" : '';
-$foods   = db()->query("SELECT * FROM foods WHERE restaurant_id=$id $cw ORDER BY category,name")->fetch_all(MYSQLI_ASSOC);
-$cats    = db()->query("SELECT DISTINCT category FROM foods WHERE restaurant_id=$id")->fetch_all(MYSQLI_ASSOC);
-$reviews = db()->query("SELECT rv.*,u.name uname FROM reviews rv JOIN users u ON u.id=rv.user_id WHERE rv.restaurant_id=$id ORDER BY rv.created_at DESC LIMIT 6")->fetch_all(MYSQLI_ASSOC);
+$foods   = db()->query("SELECT * FROM foods WHERE restaurant_id=$id $cw ORDER BY category,name")->fetch_all();
+$cats    = db()->query("SELECT DISTINCT category FROM foods WHERE restaurant_id=$id")->fetch_all();
+$reviews = db()->query("SELECT rv.*,u.name uname FROM reviews rv JOIN users u ON u.id=rv.user_id WHERE rv.restaurant_id=$id ORDER BY rv.created_at DESC LIMIT 6")->fetch_all();
 $pageTitle = e($restaurant['name']) . ' — ChopDrop';
 $isActive = !isset($restaurant['is_active']) || $restaurant['is_active'];
 require_once 'includes/header.php';

@@ -19,7 +19,7 @@ $customers = $db->query("
     WHERE o.restaurant_id = $rid $whereSearch
     GROUP BY u.id
     ORDER BY last_order_date DESC
-")->fetch_all(MYSQLI_ASSOC);
+")->fetch_all();
 
 require_once '../includes/header.php';
 ?>

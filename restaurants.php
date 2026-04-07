@@ -6,7 +6,7 @@ $search = trim($_GET['q'] ?? '');
 $s = db()->real_escape_string($search);
 $activeFilter = "(is_active IS NULL OR is_active=1)";
 $where = $search ? "WHERE (name LIKE '%$s%' OR cuisine LIKE '%$s%') AND $activeFilter" : "WHERE $activeFilter";
-$restaurants = db()->query("SELECT * FROM restaurants $where ORDER BY is_open DESC, rating DESC")->fetch_all(MYSQLI_ASSOC);
+$restaurants = db()->query("SELECT * FROM restaurants $where ORDER BY is_open DESC, rating DESC")->fetch_all();
 require_once 'includes/header.php';
 ?>
 

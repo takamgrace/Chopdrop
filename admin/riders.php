@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Location: riders.php'); exit;
 }
 
-$riders = $db->query("SELECT * FROM users WHERE role='rider' ORDER BY created_at DESC")->fetch_all(MYSQLI_ASSOC);
+$riders = $db->query("SELECT * FROM users WHERE role='rider' ORDER BY created_at DESC")->fetch_all();
 
 require_once '../includes/header.php';
 ?>

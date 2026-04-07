@@ -2,7 +2,7 @@
 session_start(); require_once 'includes/config.php'; requireLogin();
 $pageTitle='My Orders — ChopDrop';
 $uid=(int)$_SESSION['user_id'];
-$orders=db()->query("SELECT o.*,r.name rname,r.image rimage, (SELECT rating FROM reviews WHERE order_id=o.id LIMIT 1) as user_rating FROM orders o JOIN restaurants r ON r.id=o.restaurant_id WHERE o.user_id=$uid ORDER BY o.created_at DESC")->fetch_all(MYSQLI_ASSOC);
+$orders=db()->query("SELECT o.*,r.name rname,r.image rimage, (SELECT rating FROM reviews WHERE order_id=o.id LIMIT 1) as user_rating FROM orders o JOIN restaurants r ON r.id=o.restaurant_id WHERE o.user_id=$uid ORDER BY o.created_at DESC")->fetch_all();
 require_once 'includes/header.php';
 ?>
 <div class="max-w-4xl mx-auto px-5 py-12">

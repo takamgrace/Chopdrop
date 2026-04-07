@@ -19,7 +19,7 @@ $sql = "SELECT
         ORDER BY y DESC, m DESC";
 
 $result = $db->query($sql);
-$monthlyStats = $result->fetch_all(MYSQLI_ASSOC);
+$monthlyStats = $result->fetch_all();
 
 // Calculation for stats
 $totalRevenue = 0; $totalOrders = 0; $currentMonthRevenue = 0;
@@ -66,7 +66,7 @@ if ($isVendor) {
                FROM orders o JOIN restaurants r ON r.id = o.restaurant_id 
                WHERE o.status = 'delivered' 
                GROUP BY r.id, y, m";
-    $rawRes = $db->query($resSql)->fetch_all(MYSQLI_ASSOC);
+    $rawRes = $db->query($resSql)->fetch_all();
     
     // Group rawRes by restaurant
     $byRest = [];
@@ -106,7 +106,7 @@ if (!$isVendor) {
                FROM orders o JOIN restaurants r ON r.id = o.restaurant_id 
                WHERE o.status = 'delivered' 
                GROUP BY r.id, y, m ORDER BY y DESC, m DESC, revenue DESC";
-    $restaurantBreakdown = $db->query($resSqlTable)->fetch_all(MYSQLI_ASSOC);
+    $restaurantBreakdown = $db->query($resSqlTable)->fetch_all();
 }
 
 require_once '../includes/header.php';

@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isVendor) {
     header('Location: index.php'); exit;
 }
 
-$riders = $isVendor ? $db->query("SELECT id, name FROM users WHERE role='rider' AND is_active=1 AND is_online=1")->fetch_all(MYSQLI_ASSOC) : [];
+$riders = $isVendor ? $db->query("SELECT id, name FROM users WHERE role='rider' AND is_active=1 AND is_online=1")->fetch_all() : [];
 
 // Base query conditions
 $whereRest      = $isVendor ? "WHERE o.restaurant_id=$rid" : "";
@@ -70,18 +70,18 @@ if ($isVendor) {
     $actionableOrders = $db->query("SELECT o.*,u.name uname,u.phone uphone FROM orders o 
         JOIN users u ON u.id=o.user_id
         WHERE o.restaurant_id=$rid AND o.status IN ('pending','confirmed','preparing') AND (o.rider_id IS NULL OR o.rider_id=0)
-        ORDER BY o.created_at ASC")->fetch_all(MYSQLI_ASSOC);
+        ORDER BY o.created_at ASC")->fetch_all();
 
     // All recent orders (read-only view)
     $recentOrders = $db->query("SELECT o.*,u.name uname, rider.name rider_name FROM orders o 
         JOIN users u ON u.id=o.user_id 
         LEFT JOIN users rider ON rider.id=o.rider_id
         WHERE o.restaurant_id=$rid
-        ORDER BY o.created_at DESC LIMIT 10")->fetch_all(MYSQLI_ASSOC);
+        ORDER BY o.created_at DESC LIMIT 10")->fetch_all();
 } else {
     $recentVendors = $db->query("SELECT u.*, r.name as rname, r.id as rid FROM users u 
         LEFT JOIN restaurants r ON r.id=u.restaurant_id 
-        WHERE u.role='vendor' ORDER BY u.created_at DESC LIMIT 5")->fetch_all(MYSQLI_ASSOC);
+        WHERE u.role='vendor' ORDER BY u.created_at DESC LIMIT 5")->fetch_all();
 }
 
 $sc = ['pending'=>'bg-amber-900/70 text-amber-300 border-amber-500/30','confirmed'=>'bg-blue-900/70 text-blue-300 border-blue-500/30','preparing'=>'bg-violet-900/70 text-violet-300 border-violet-500/30','ready'=>'bg-green-900/70 text-green-300 border-green-500/30','in_transit'=>'bg-orange-900/70 text-orange-300 border-orange-500/30','delivered'=>'bg-emerald-900/70 text-emerald-300 border-emerald-500/30','cancelled'=>'bg-gray-900/70 text-gray-400 border-gray-600/30'];

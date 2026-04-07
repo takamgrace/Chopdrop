@@ -3,7 +3,7 @@ session_start(); require_once 'includes/config.php'; requireLogin();
 $id=(int)($_GET['id']??0); $uid=(int)$_SESSION['user_id'];
 $order=db()->query("SELECT o.*,r.name rname,r.phone rphone, u.name uname FROM orders o JOIN restaurants r ON r.id=o.restaurant_id JOIN users u ON u.id=o.user_id WHERE o.id=$id AND o.user_id=$uid")->fetch_assoc();
 if (!$order) { header('Location: orders.php'); exit; }
-$orderItems=db()->query("SELECT * FROM order_items WHERE order_id=$id")->fetch_all(MYSQLI_ASSOC);
+$orderItems=db()->query("SELECT * FROM order_items WHERE order_id=$id")->fetch_all();
 $steps=['pending'=>0,'confirmed'=>1,'preparing'=>2,'ready'=>3,'in_transit'=>4,'delivered'=>5];
 $stepL=['Order Placed','Confirmed','Being Prepared','Ready','On the Way','Delivered'];
 $stepI=['📋','✅','👨‍🍳','🎁','🚴','🏠'];

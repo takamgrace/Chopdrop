@@ -97,7 +97,7 @@ $restaurants=$db->query("SELECT r.*,
     (SELECT COUNT(*) FROM orders WHERE restaurant_id=r.id) oc
     FROM restaurants r 
     WHERE 1=1 $where
-    ORDER BY r.is_active DESC, r.id DESC")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY r.is_active DESC, r.id DESC")->fetch_all();
 
 require_once '../includes/header.php';
 ?>

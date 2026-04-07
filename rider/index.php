@@ -45,21 +45,21 @@ $available = $db->query("SELECT o.*, r.name rname, r.address raddress, u.name un
     JOIN restaurants r ON r.id=o.restaurant_id 
     JOIN users u ON u.id=o.user_id
     WHERE o.status='ready' AND o.rider_id=$riderId
-    ORDER BY o.created_at DESC")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY o.created_at DESC")->fetch_all();
 
 // My active orders (In Transit)
 $active = $db->query("SELECT o.*, r.name rname, r.address raddress, u.name uname FROM orders o 
     JOIN restaurants r ON r.id=o.restaurant_id 
     JOIN users u ON u.id=o.user_id
     WHERE o.rider_id=$riderId AND o.status='in_transit' AND o.restaurant_id=$rid
-    ORDER BY o.created_at DESC")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY o.created_at DESC")->fetch_all();
 
 // Recent delivery history
 $history = $db->query("SELECT o.*, r.name rname, u.name uname FROM orders o 
     JOIN restaurants r ON r.id=o.restaurant_id 
     JOIN users u ON u.id=o.user_id
     WHERE o.rider_id=$riderId AND o.status='delivered' AND o.restaurant_id=$rid
-    ORDER BY o.created_at DESC LIMIT 5")->fetch_all(MYSQLI_ASSOC);
+    ORDER BY o.created_at DESC LIMIT 5")->fetch_all();
 
 require_once '../includes/header.php';
 ?>
