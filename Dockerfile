@@ -1,26 +1,41 @@
 FROM php:8.2-apache
 
-# Install PostgreSQL PDO driver
+# Install all required extensions in one layer
 RUN apt-get update && apt-get install -y \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install \
+        pdo \
+        pdo_pgsql \
+        pgsql \
+        mysqli \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install mysqli too (in case you need it later)
-RUN docker-php-ext-install mysqli
+# Enable Apache modules
+RUN a2enmod rewrite headers
 
-# Copy all your project files into the container
+# Replace default Apache virtual host config
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html\n\
+    <Directory /var/www/html>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+        Options -Indexes\n\
+    </Directory>\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+# Copy all project files
 COPY . /var/www/html/
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Apache config
-RUN echo '<Directory /var/www/html>\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>' >> /etc/apache2/apache2.conf
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html/ \
+    && find /var/www/html -type f -exec chmod 644 {} \; \
+    && find /var/www/html -type d -exec chmod 755 {} \;
 
 EXPOSE 80

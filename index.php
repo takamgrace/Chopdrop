@@ -1,5 +1,9 @@
 <?php
 
+// TEMPORARY — remove after fixing
+echo "PHP is working. Host=" . getenv('DB_HOST');
+exit;
+
 
 session_start();
 require_once 'includes/config.php';
