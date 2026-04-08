@@ -95,11 +95,7 @@ require_once 'includes/header.php';
     </div>
   </div>
 
-  <!-- Scroll indicator -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-purple-400 text-xs animate-bounce">
-    <span>Scroll</span>
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-  </div>
+
 </section>
 
 <!-- Flash messages -->
@@ -367,12 +363,14 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Pulse Effect -->
     <div class="absolute inset-0 bg-white/20 animate-ping rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
     
-    <!-- Food Icon (SVG Plate) -->
+    <!-- Meal Icon (SVG Plate, Fork, Knife) -->
     <svg class="w-10 h-10 text-white drop-shadow-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/>
-      <path d="M8 12c.5-2 1.5-3 4-3s3.5 1 4 3-1.5 3-4 3-3.5-1-4-3z" fill="white" fill-opacity="0.3"/>
-      <path d="M12 9v6M9 12h6"/>
-      <path d="M7 16s1-1 2-1 3 1 3 1 1-1 2-1 3 1 3 1"/>
+      <path d="M3 2v7c0 1.1.9 2 2 2h4V2"/>
+      <path d="M9 2v9"/>
+      <path d="M15 2v9"/>
+      <path d="M21 2v7c0 1.1-.9 2-2 2h-4V2"/>
+      <path d="M12 12s-3 3-3 6 1.5 4 3 4 3-1 3-4-3-6-3-6z"/>
+      <circle cx="12" cy="12" r="9"/>
     </svg>
 
     <div class="absolute top-1 right-2 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-lg"></div>
@@ -407,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <!-- Suggested Prompts -->
     <div id="chatbot-suggestions" class="px-6 py-3 flex gap-2 overflow-x-auto no-scrollbar border-t border-white/5 bg-white/5">
-      <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Recommend Sushi</button>
+      <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Recommend Burger</button>
       <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Local Favorites</button>
       <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Dinner under 5000</button>
     </div>
