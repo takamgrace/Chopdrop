@@ -2,34 +2,23 @@
 if (defined('CHOPDROP_DB_LOADED')) return;
 define('CHOPDROP_DB_LOADED', true);
 
-// ─── Load .env file (local development only) ──────────────────────────────
-$envFile = __DIR__ . '/../.env';
-if (file_exists($envFile)) {
-    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if ($line === '' || $line[0] === '#') continue;
-        if (strpos($line, '=') === false) continue;
-        [$key, $val] = explode('=', $line, 2);
-        $key = trim($key);
-        $val = trim($val, " \t\n\r\0\x0B\"'");
-        if (!getenv($key)) {
-            putenv("$key=$val");
-            $_ENV[$key] = $val;
-        }
-    }
-}
+// ─── ERROR REPORTING (useful during development) ──────────────────────────
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// ─── Read credentials from environment ────────────────────────────────────
-$host   = getenv('DB_HOST') ?: '127.0.0.1';
-$user   = getenv('DB_USER') ?: 'root';
-$pass   = getenv('DB_PASS') ?: '';
-$dbname = getenv('DB_NAME') ?: 'neondb';
-$port   = (int)(getenv('DB_PORT') ?: 5432);
+// ─── LOCAL MySQL CREDENTIALS ──────────────────────────────────────────────
+// Edit these four lines to match your WAMP / XAMPP / LAMP setup
+$host   = 'localhost';
+$user   = 'root';
+$pass   = '';             // WAMP default is empty, XAMPP default is empty
+$dbname = 'chopdrop';
+$port   = 3306;
 
-define('SITE_NAME', getenv('APP_NAME') ?: 'ChopDrop');
-define('SITE_URL',  getenv('SITE_URL') ?: 'http://localhost/chopdrop');
-define('CURRENCY',  getenv('CURRENCY') ?: 'XAF');
+// ─── SITE SETTINGS ────────────────────────────────────────────────────────
+define('SITE_NAME', 'ChopDrop');
+define('SITE_URL',  'http://localhost/chopdrop');
+define('CURRENCY',  'XAF');
 
 // ─── mysqli-style result wrapper ──────────────────────────────────────────
 class DBResultCompat {
@@ -40,21 +29,23 @@ class DBResultCompat {
         $this->stmt     = $stmt;
         $this->num_rows = $stmt->rowCount();
     }
+
     public function fetch_assoc(): array|false {
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
-    // Accept optional MYSQLI_ASSOC constant or nothing — both work
+
+    // Accepts optional MYSQLI_ASSOC constant — just ignores it
     public function fetch_all($mode = null): array {
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
-// ─── mysqli-style connection wrapper ──────────────────────────────────────
+// ─── mysqli-style connection wrapper ─────────────────────────────────────
 class DBCompat {
-    public PDO    $pdo;
-    public ?string $connect_error = null;
+    public PDO     $pdo;
     public int     $insert_id     = 0;
     public int     $affected_rows = 0;
+    public ?string $connect_error = null;
 
     public function __construct(string $dsn, string $user, string $pass) {
         $this->pdo = new PDO($dsn, $user, $pass, [
@@ -65,10 +56,6 @@ class DBCompat {
     }
 
     public function query(string $sql): DBResultCompat|false {
-        // Convert MySQL backticks → PostgreSQL double-quotes
-        $sql = str_replace('`', '"', $sql);
-        // Convert MySQL RAND() → PostgreSQL RANDOM()
-        $sql = preg_replace('/\bRAND\s*\(\s*\)/i', 'RANDOM()', $sql);
         try {
             $stmt = $this->pdo->query($sql);
             $this->affected_rows = $stmt->rowCount();
@@ -83,8 +70,6 @@ class DBCompat {
     }
 
     public function prepare(string $sql): PDOStatement {
-        $sql = str_replace('`', '"', $sql);
-        $sql = preg_replace('/\bRAND\s*\(\s*\)/i', 'RANDOM()', $sql);
         return $this->pdo->prepare($sql);
     }
 
@@ -97,34 +82,25 @@ class DBCompat {
     public function rollback(): void          { $this->pdo->rollBack(); }
 }
 
-// ─── Connect to Neon PostgreSQL ───────────────────────────────────────────
+// ─── Connect to local MySQL ───────────────────────────────────────────────
 try {
-    // Extract Neon endpoint ID for SNI (required by Neon)
-    // Host: ep-name-123456-pooler.us-east-1.aws.neon.tech
-    // Endpoint ID: ep-name-123456
-    preg_match('/^(ep-[a-z0-9]+-[a-z0-9]+)/i', $host, $matches);
-    $endpoint_id = $matches[1] ?? '';
-
-    $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode=require"
-         . ($endpoint_id ? ";options=endpoint%3D{$endpoint_id}" : '');
-
+    $dsn  = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
     $conn = new DBCompat($dsn, $user, $pass);
-
 } catch (PDOException $e) {
-    error_log("DB connection failed: " . $e->getMessage());
     die('
     <div style="font-family:sans-serif;padding:40px;background:#1a0a2e;color:#fff;min-height:100vh">
         <h2 style="color:#c084fc">&#x26A0; Database Connection Failed</h2>
         <p style="color:#f87171">' . htmlspecialchars($e->getMessage()) . '</p>
         <hr style="border:1px solid #444;margin:20px 0">
-        <p><strong>Debug Info:</strong></p>
-        <ul style="line-height:2;font-family:monospace">
-            <li>Host: <code>' . htmlspecialchars($host)   . '</code></li>
-            <li>User: <code>' . htmlspecialchars($user)   . '</code></li>
-            <li>DB:   <code>' . htmlspecialchars($dbname) . '</code></li>
-            <li>Port: <code>' . $port                     . '</code></li>
-        </ul>
-        <p style="color:#fbbf24">&#x2192; Go to Render &#x2192; Your Web Service &#x2192; Environment and set DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT</p>
+        <p><strong>How to fix:</strong></p>
+        <ol style="line-height:2.2;font-family:sans-serif">
+            <li>Make sure <b>WAMP / XAMPP / LAMP</b> is running</li>
+            <li>Make sure MySQL is started (green icon in WAMP)</li>
+            <li>Open <b>phpMyAdmin</b> and create a database called <code>chopdrop_db</code></li>
+            <li>Import <code>chopdrop.sql</code> into that database</li>
+            <li>If your MySQL password is not empty, edit <code>includes/config.php</code> line 14</li>
+        </ol>
+        <p style="color:#fbbf24">Host: <code>' . $host . '</code> &nbsp; DB: <code>' . $dbname . '</code> &nbsp; User: <code>' . $user . '</code></p>
     </div>');
 }
 
@@ -136,7 +112,7 @@ if (!function_exists('db')) {
     }
 }
 
-// ─── Auth helpers ──────────────────────────────────────────────────────────
+// ─── Auth helpers ─────────────────────────────────────────────────────────
 function isLoggedIn(): bool { return isset($_SESSION['user_id']); }
 function isAdmin(): bool    { return isset($_SESSION['role']) && $_SESSION['role'] === 'admin'; }
 function isVendor(): bool   { return isset($_SESSION['role']) && $_SESSION['role'] === 'vendor'; }
@@ -145,21 +121,44 @@ function isRider(): bool    { return isset($_SESSION['role']) && $_SESSION['role
 function requireLogin(string $redirect = 'login.php'): void {
     if (!isLoggedIn()) {
         flash('error', 'Please log in to continue.');
-        header("Location: $redirect");
+        $r = (str_contains($_SERVER['SCRIPT_NAME'], '/admin/')) ? '../'.$redirect : $redirect;
+        header("Location: $r");
         exit;
     }
 }
 
+function requireAdmin(string $redirect = '../login.php'): void {
+    if (!isAdmin()) {
+        flash('error', 'Administrator access required.');
+        header("Location: $redirect"); exit;
+    }
+}
+
+function requireRider(string $redirect = '../login.php'): void {
+    if (!isRider()) {
+        flash('error', 'Rider access required.');
+        header("Location: $redirect"); exit;
+    }
+}
+
+function requireAdminOrVendor(string $redirect = '../login.php'): void {
+    if (!isAdmin() && !isVendor()) {
+        flash('error', 'Unauthorized access.');
+        header("Location: $redirect"); exit;
+    }
+}
+
+function getVendorRid(): int {
+    return (int)($_SESSION['restaurant_id'] ?? 0);
+}
+
 // ─── Flash message helpers ────────────────────────────────────────────────
 function flash(string $key, string $message = ''): ?string {
+    if (session_status() === PHP_SESSION_NONE) session_start();
     if ($message !== '') {
-        // Set flash message
-        if (session_status() === PHP_SESSION_NONE) session_start();
         $_SESSION['_flash'][$key] = $message;
         return null;
     }
-    // Get and clear flash message
-    if (session_status() === PHP_SESSION_NONE) session_start();
     $msg = $_SESSION['_flash'][$key] ?? null;
     unset($_SESSION['_flash'][$key]);
     return $msg;
@@ -169,7 +168,7 @@ function flash(string $key, string $message = ''): ?string {
 function e(string $s): string  { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function money(int $n): string { return number_format($n) . ' ' . CURRENCY; }
 
-// ─── Cart helpers ──────────────────────────────────────────────────────────
+// ─── Cart helpers ─────────────────────────────────────────────────────────
 function cartCount(): int {
     if (!isLoggedIn()) return 0;
     $uid = (int)$_SESSION['user_id'];
@@ -184,8 +183,8 @@ function cartItems(): array {
     $uid = (int)$_SESSION['user_id'];
     $r   = db()->query("
         SELECT c.*, f.name, f.price, f.image,
-               r.name        AS restaurant_name,
-               r.id          AS restaurant_id,
+               r.name         AS restaurant_name,
+               r.id           AS restaurant_id,
                r.delivery_fee AS delivery_fee
         FROM   cart c
         JOIN   foods       f ON f.id = c.food_id
