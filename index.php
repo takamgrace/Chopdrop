@@ -358,4 +358,131 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- ═══════════════════════════════════════════
+     AI CONCIERGE CHATBOT
+════════════════════════════════════════════ -->
+<div class="fixed bottom-8 left-8 z-[90]">
+  <!-- Chat Button -->
+  <button id="chatbot-toggle" class="w-16 h-16 btn-gold rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 active:scale-95 transition-all relative group">
+    <span class="group-hover:rotate-12 transition-transform">🤖</span>
+    <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-purple-950 rounded-full"></div>
+    <!-- Tooltip -->
+    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-4 py-2 bg-gold-400 text-purple-950 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none translate-y-2 group-hover:translate-y-0 shadow-xl">
+      Ask AI Concierge
+    </div>
+  </button>
+
+  <!-- Chat Window -->
+  <div id="chatbot-window" class="hidden absolute bottom-20 left-0 w-[350px] md:w-[400px] h-[500px] glass rounded-[40px] border border-gold-500/20 shadow-[0_20px_60px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden animate-fade-up">
+    <!-- Header -->
+    <div class="p-6 bg-gradient-to-r from-gold-500 to-gold-400 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-purple-950 rounded-2xl flex items-center justify-center text-xl shadow-inner">✨</div>
+        <div>
+          <div class="text-purple-950 font-black text-sm leading-tight">AI Concierge</div>
+          <div class="text-purple-900/60 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1">
+            <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></span> Online Now
+          </div>
+        </div>
+      </div>
+      <button id="chatbot-close" class="text-purple-950/50 hover:text-purple-950 transition-colors text-xl">✕</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="chatbot-messages" class="flex-1 p-6 overflow-y-auto space-y-4 scroll-smooth">
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-xl bg-gold-500/20 flex items-center justify-center text-sm flex-shrink-0">🍱</div>
+        <div class="bg-white/10 p-4 rounded-2xl rounded-tl-none text-xs text-purple-200 border border-white/5 leading-relaxed">
+          Hello! I'm your **ChopDrop AI Concierge**. <br/><br/>
+          I can help you find the perfect meal based on your budget or craving. What are you in the mood for tonight?
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggested Prompts -->
+    <div id="chatbot-suggestions" class="px-6 py-3 flex gap-2 overflow-x-auto no-scrollbar border-t border-white/5 bg-white/5">
+      <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Recommend Sushi</button>
+      <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Local Favorites</button>
+      <button class="suggestion-btn glass whitespace-nowrap px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-gold-400 border-gold-500/20 hover:bg-gold-500 hover:text-purple-950 transition-all">Dinner under 5000</button>
+    </div>
+
+    <!-- Input -->
+    <form id="chatbot-form" class="p-4 bg-white/5 border-t border-white/10 flex gap-2">
+      <input type="text" id="chatbot-input" placeholder="Type your craving..." class="flex-1 bg-white/10 border border-white/10 rounded-2xl px-4 py-3 text-xs text-white placeholder-purple-400 outline-none focus:border-gold-500 transition-all" autocomplete="off"/>
+      <button type="submit" class="w-10 h-10 btn-gold rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleBtn = document.getElementById('chatbot-toggle');
+  const closeBtn = document.getElementById('chatbot-close');
+  const windowEl = document.getElementById('chatbot-window');
+  const messagesEl = document.getElementById('chatbot-messages');
+  const formEl = document.getElementById('chatbot-form');
+  const inputEl = document.getElementById('chatbot-input');
+
+  toggleBtn.addEventListener('click', () => windowEl.classList.toggle('hidden'));
+  closeBtn.addEventListener('click', () => windowEl.classList.add('hidden'));
+
+  function addMessage(text, type = 'bot') {
+    const div = document.createElement('div');
+    div.className = `flex gap-3 ${type === 'user' ? 'flex-row-reverse' : ''}`;
+    
+    const icon = type === 'bot' ? '🍱' : '👤';
+    const bg = type === 'bot' ? 'bg-white/10 border-white/5' : 'bg-gold-500/10 border-gold-500/20';
+    const radius = type === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none';
+    
+    div.innerHTML = `
+      <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-sm flex-shrink-0">${icon}</div>
+      <div class="${bg} p-4 rounded-2xl ${radius} text-xs ${type === 'bot' ? 'text-purple-200' : 'text-white'} border leading-relaxed max-w-[80%]">
+        ${text.replace(/\n/g, '<br/>')}
+      </div>
+    `;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  formEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = inputEl.value.trim();
+    if (!msg) return;
+
+    inputEl.value = '';
+    addMessage(msg, 'user');
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'flex gap-3 animate-pulse';
+    typing.innerHTML = '<div class="w-8 h-8 rounded-xl bg-white/5"></div><div class="bg-white/10 p-4 rounded-2xl rounded-tl-none text-[10px] text-purple-400 border border-white/5 italic">Concierge is thinking...</div>';
+    messagesEl.appendChild(typing);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    try {
+      const res = await fetch('ajax_chatbot.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      typing.remove();
+      addMessage(data.reply || "I'm sorry, I couldn't process that. Please try again.");
+    } catch (err) {
+      typing.remove();
+      addMessage("Connection to Concierge lost. Check your internet.");
+    }
+  });
+
+  document.querySelectorAll('.suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      inputEl.value = btn.textContent;
+      formEl.dispatchEvent(new Event('submit'));
+    });
+  });
+});
+</script>
+
 <?php require_once 'includes/footer.php'; ?>
