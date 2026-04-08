@@ -361,19 +361,25 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ═══════════════════════════════════════════
      AI CONCIERGE CHATBOT
 ════════════════════════════════════════════ -->
-<div class="fixed bottom-8 right-8 z-[90]">
+<div class="fixed bottom-10 right-10 z-[90]">
   <!-- Chat Button -->
-  <button id="chatbot-toggle" class="w-16 h-16 btn-gold rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative group">
-    <svg class="w-8 h-8 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-    <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-purple-950 rounded-full"></div>
-    <!-- Tooltip -->
-    <div class="absolute bottom-full right-1/2 translate-x-1/2 mb-4 px-4 py-2 bg-gold-400 text-purple-950 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none translate-y-2 group-hover:translate-y-0 shadow-xl">
-      Ask AI Concierge
-    </div>
+  <button id="chatbot-toggle" class="w-20 h-20 btn-gold rounded-full shadow-[0_15px_40px_rgba(245,158,11,0.4)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative group overflow-hidden">
+    <!-- Pulse Effect -->
+    <div class="absolute inset-0 bg-white/20 animate-ping rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+    
+    <!-- Food Icon (SVG Plate) -->
+    <svg class="w-10 h-10 text-white drop-shadow-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/>
+      <path d="M8 12c.5-2 1.5-3 4-3s3.5 1 4 3-1.5 3-4 3-3.5-1-4-3z" fill="white" fill-opacity="0.3"/>
+      <path d="M12 9v6M9 12h6"/>
+      <path d="M7 16s1-1 2-1 3 1 3 1 1-1 2-1 3 1 3 1"/>
+    </svg>
+
+    <div class="absolute top-1 right-2 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-lg"></div>
   </button>
 
   <!-- Chat Window -->
-  <div id="chatbot-window" class="hidden absolute bottom-20 left-0 w-[350px] md:w-[400px] h-[500px] glass rounded-[40px] border border-gold-500/20 shadow-[0_20px_60px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden animate-fade-up">
+  <div id="chatbot-window" class="hidden absolute bottom-24 right-0 w-[350px] md:w-[420px] h-[550px] glass rounded-[50px] border border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden animate-fade-up">
     <!-- Header -->
     <div class="p-6 bg-gradient-to-r from-gold-500 to-gold-400 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -436,10 +442,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const radius = type === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none';
     
     div.innerHTML = `
-      <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-sm flex-shrink-0">
-        ${type === 'bot' ? '<svg class="w-4 h-4 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>' : '👤'}
+      <div class="w-9 h-9 rounded-2xl bg-white/5 flex items-center justify-center text-lg flex-shrink-0 shadow-inner">
+        ${type === 'bot' ? '👨‍🍳' : '👤'}
       </div>
-      <div class="${bg} p-4 rounded-2xl ${radius} text-xs ${type === 'bot' ? 'text-purple-200' : 'text-white'} border leading-relaxed max-w-[80%]">
+      <div class="${bg} p-5 rounded-3xl ${radius} text-xs ${type === 'bot' ? 'text-purple-200' : 'text-white'} border shadow-sm leading-relaxed max-w-[85%]">
         ${text.replace(/\n/g, '<br/>')}
       </div>
     `;
