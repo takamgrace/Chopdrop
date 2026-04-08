@@ -361,13 +361,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ═══════════════════════════════════════════
      AI CONCIERGE CHATBOT
 ════════════════════════════════════════════ -->
-<div class="fixed bottom-8 left-8 z-[90]">
+<div class="fixed bottom-8 right-8 z-[90]">
   <!-- Chat Button -->
-  <button id="chatbot-toggle" class="w-16 h-16 btn-gold rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 active:scale-95 transition-all relative group">
-    <span class="group-hover:rotate-12 transition-transform">🤖</span>
+  <button id="chatbot-toggle" class="w-16 h-16 btn-gold rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative group">
+    <svg class="w-8 h-8 group-hover:rotate-12 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
     <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-purple-950 rounded-full"></div>
     <!-- Tooltip -->
-    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-4 py-2 bg-gold-400 text-purple-950 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none translate-y-2 group-hover:translate-y-0 shadow-xl">
+    <div class="absolute bottom-full right-1/2 translate-x-1/2 mb-4 px-4 py-2 bg-gold-400 text-purple-950 text-[10px] font-black uppercase tracking-widest rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none translate-y-2 group-hover:translate-y-0 shadow-xl">
       Ask AI Concierge
     </div>
   </button>
@@ -432,12 +432,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const div = document.createElement('div');
     div.className = `flex gap-3 ${type === 'user' ? 'flex-row-reverse' : ''}`;
     
-    const icon = type === 'bot' ? '🍱' : '👤';
     const bg = type === 'bot' ? 'bg-white/10 border-white/5' : 'bg-gold-500/10 border-gold-500/20';
     const radius = type === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none';
     
     div.innerHTML = `
-      <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-sm flex-shrink-0">${icon}</div>
+      <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-sm flex-shrink-0">
+        ${type === 'bot' ? '<svg class="w-4 h-4 text-gold-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>' : '👤'}
+      </div>
       <div class="${bg} p-4 rounded-2xl ${radius} text-xs ${type === 'bot' ? 'text-purple-200' : 'text-white'} border leading-relaxed max-w-[80%]">
         ${text.replace(/\n/g, '<br/>')}
       </div>
